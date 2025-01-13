@@ -15,6 +15,7 @@ package frc.robot;
 
 import akka.actor.typed.ActorSystem;
 import akka.actor.typed.javadsl.Behaviors;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.actor.HelloWorldMain;
 import frc.robot.actor.HelloWorldMain.SayHello;
 
@@ -32,8 +33,13 @@ public final class Main {
    * <p>If you change your main robot class, change the parameter type.
    */
   public static void main(String... args) {
+    robot();
     // unitTestHello();
-    unitTest();
+    // unitTest();
+  }
+
+  public static void robot() {
+    RobotBase.startRobot(Robot::new);
   }
 
   public static void unitTestHello() {
