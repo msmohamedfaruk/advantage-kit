@@ -1,4 +1,5 @@
 plugins {
+    id "application"
     id "java"
     id "edu.wpi.first.GradleRIO" version "2024.3.2"
     id "com.peterabeles.gversion" version "1.10"
@@ -58,6 +59,9 @@ repositories {
             password = "\u0067\u0068\u0070\u005f\u006e\u0056\u0051\u006a\u0055\u004f\u004c\u0061\u0079\u0066\u006e\u0078\u006e\u0037\u0051\u0049\u0054\u0042\u0032\u004c\u004a\u006d\u0055\u0070\u0073\u0031\u006d\u0037\u004c\u005a\u0030\u0076\u0062\u0070\u0063\u0051"
         }
     }
+    maven {
+        url = "https://repo.akka.io/maven"
+    }
     mavenLocal()
 }
 
@@ -70,6 +74,10 @@ task(checkAkitInstall, dependsOn: "classes", type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 compileJava.finalizedBy checkAkitInstall
+
+def versions = [
+    ScalaBinary: "2.13"
+]
 
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 4.
@@ -96,6 +104,17 @@ dependencies {
 
     def akitJson = new groovy.json.JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/AdvantageKit.json").text)
     annotationProcessor "org.littletonrobotics.akit.junction:junction-autolog:$akitJson.version"
+
+    // implementation "ch.qos.logback:logback-classic:1.2.3"
+
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.7'
+
+    implementation platform("com.typesafe.akka:akka-bom_${versions.ScalaBinary}:2.10.0")
+
+    implementation "com.typesafe.akka:akka-actor-typed_${versions.ScalaBinary}"
+    testImplementation "com.typesafe.akka:akka-actor-testkit-typed_${versions.ScalaBinary}"
+
+
 }
 
 test {
@@ -143,6 +162,7 @@ gversion {
     indent       = "  "
 }
 
+
 // Spotless formatting
 project.compileJava.dependsOn(spotlessApply)
 spotless {
@@ -183,4 +203,11 @@ spotless {
         indentWithSpaces(2)
         endWithNewline()
     }
+}
+
+mainClassName = "frc.robot.Main"
+
+
+run {
+    standardInput = System.in
 }
